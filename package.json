@@ -1,0 +1,41 @@
+{
+  "name": "urdfjs",
+  "version": "0.0.1",
+  "description": "UR FDS JS",
+  "main": "./main.ts",
+  "scripts": {
+    "dev": "yarn run start-development-server",
+    "build": "yarn run build-for-distribution",
+    "start-development-server": "webpack-dev-server --progress --colors --hot --inline --host 0.0.0.0 --config webpack.config.js",
+    "build-for-distribution": "yarn run remove-previous-build && yarn run build-webpack",
+    "build-for-dev": "yarn run remove-previous-build && yarn run build-webpack-dev",
+    "remove-previous-build": "rimraf build/*",
+    "build-webpack": "webpack --progress --optimize-minimize --config webpack.config.js",
+    "build-webpack-dev": "webpack --progress --config webpack.config.js",
+    "prettier": "yarn run prettier-js && yarn run prettier-ts",
+    "prettier-js": "prettier --print-width 100 --trailing-comma es5 --no-bracket-spacing --write --parser babylon \"!(build)/**/*.{js,jsx}\"",
+    "prettier-ts": "prettier --print-width 100 --trailing-comma es5 --no-bracket-spacing --write --parser typescript \"!(build)/**/*.{ts,tsx}\""
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "Goosetaco Goretking",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@types/three": "^0.84.20",
+    "ts-loader": "^2.3.3",
+    "tslint": "^5.6.0",
+    "tslint-loader": "^3.5.3",
+    "typescript": "^2.4.2",
+    "webpack": "^3.5.5",
+    "webpack-dev-server": "^2.7.1"
+  },
+  "dependencies": {
+    "core-js": "^2.5.0",
+    "eventemitter2": "^4.1.2",
+    "ros3djs": "file:vendor/ros3djs",
+    "roslib": "file:../julia_lqr/js/roslibjs",
+    "three": "^0.87.1"
+  }
+}
