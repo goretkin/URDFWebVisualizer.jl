@@ -3,8 +3,8 @@ console.log("hey gurl");
 // https://github.com/mrdoob/three.js/commit/c2cec2e7dca8b6b47ce25f831635b13275e0217f
 // https://github.com/enspiral-cherubi/three-stl-loader/issues/5
 // monkey patch, otherwise not needed.
-var THREE = require("three");
-THREE.FileLoader = THREE.XHRLoader;
+// var THREE = require("three");
+// THREE.FileLoader = THREE.XHRLoader;
 
 //var EventEmitter2 = require("eventemitter2");
 //window.THREE = THREE;

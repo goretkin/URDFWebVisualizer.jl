@@ -1,0 +1,5 @@
+{
+  "name": "STLLoader",
+  "license": "BSD-3-Clause",
+  "main": "./STLLoader_wrapper.js"
+}
