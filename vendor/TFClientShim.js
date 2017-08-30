@@ -1,3 +1,8 @@
+// The URDF visualization utilities in ROSLIB and ros3djs require a TFClient,
+// which actually listens to transforms published on the TF topic.
+// We don't need any of that, so copy-paste TFClient and add some methods for
+// injecting transforms.
+
 function TFClientShim(options) {
   options = options || {};
   this.fixedFrame = options.fixedFrame || '/base_link';
