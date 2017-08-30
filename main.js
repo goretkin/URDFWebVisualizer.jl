@@ -90,50 +90,42 @@ var transform_urdf_;
 var joint_parents;
 var joint_childs;
 
-function init(div_id) {
-  /*
-  var ros = new ROSLIB.Ros({
-    url : 'ws://demo.robotwebtools.org:9090'
-  });
-  */
+function init_urdf_viewer(options, output) {
+  console.log("hey");
+  options.width = typeof options.width === 'undefined' ? window.innerWidth : options.width;
+  options.height = typeof options.height === 'undefined' ? window.innerHeight : options.height;
+  var urdf_url = options.urdf_url;
+  var urdf_resources_url = options.urdf_resources_url;
+
   var tf_shim = new TFClientShim();
 
   viewer = new ROS3D.Viewer({
-    divID : div_id,
-    width : window.innerWidth,
-    height : window.innerHeight,
+    divID : options.div_id,
+    width : options.width,
+    height : options.height,
     antialias : true,
     background: '#002233'
   });
-  viewer.addObject(new ROS3D.Grid({
+  viewer.addObject(new ROS3D.Grid(options.grid_options || {
     color:'#0181c4',
     cellSize: 0.05,
     num_cells: 20
   }));
 
 
-  $.get("./pr2_description/robot_uncalibrated_fix_mass.xml", function(data) {
+  $.get(urdf_url, function(data) {
+      console.log("jquery");
     urdf_string = data;
     urdf_model = new ROSLIB.UrdfModel({ string : urdf_string});
 
-    /*
-    urdf_vis = new ROS3D.UrdfBare({
-      urdfModel : urdf_model,
-      path : 'http://resources.robotwebtools.org/',
-      loader :  ROS3D.COLLADA_LOADER_2
-    });
-    */
-
     urdf_vis = new ROS3D.Urdf({
       urdfModel : urdf_model,
-      //path : 'http://resources.robotwebtools.org/',
-      path : 'http://0.0.0.0:8000/', // python -m SimpleHTTPServer
+      path : urdf_resources_url,
       tfClient : tf_shim,
       tfPrefix : "",
       loader : ROS3D.COLLADA_LOADER_2
     });
     viewer.scene.add(urdf_vis);
-
 
     joint_parents = {};
     joint_childs = {};
@@ -183,6 +175,10 @@ function init(div_id) {
         );
       }
     }
+
+    output.update_configurations = update_configurations;
+    if (options.urdf_vis_ready) { options.urdf_vis_ready(output); }
+
     var t = 0.0;
     function animate() {
       var a = .1 * Math.sin(2*Math.PI * t) + 0.01 * Math.cos(2*Math.PI * .8 * t);
@@ -193,12 +189,12 @@ function init(div_id) {
 
       // configurations["r_elbow_flex_joint"] = a;
       update_configurations(configurations);
-      t += 0.1;
+      t += 0.01;
     };
 
-    interval_id = setInterval(animate, 100)
+    interval_id = setInterval(animate, 10)
   },
   "text"); // jQuery get
 }
-console.log("here");
-window.initgg = init;
+
+window.init_urdf_viewer = init_urdf_viewer;
