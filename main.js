@@ -108,7 +108,7 @@ var transform_urdf_;
 var joint_parents;
 var joint_childs;
 
-function init() {
+function init(div_id) {
   /*
   var ros = new ROSLIB.Ros({
     url : 'ws://demo.robotwebtools.org:9090'
@@ -116,7 +116,7 @@ function init() {
   */
 
   viewer = new ROS3D.Viewer({
-    divID : 'urdf',
+    divID : div_id,
     width : window.innerWidth,
     height : window.innerHeight,
     antialias : true,
@@ -143,7 +143,8 @@ function init() {
 
     urdf_vis = new ROS3D.Urdf({
       urdfModel : urdf_model,
-      path : 'http://resources.robotwebtools.org/',
+      //path : 'http://resources.robotwebtools.org/',
+      path : 'http://0.0.0.0:8000/', // python -m SimpleHTTPServer
       tfClient : tf_shim,
       tfPrefix : "",
       loader : ROS3D.COLLADA_LOADER_2
@@ -209,11 +210,12 @@ function init() {
 
       // configurations["r_elbow_flex_joint"] = a;
       update_configurations(configurations);
-      t += 0.01;
+      t += 0.1;
     };
 
-    interval_id = setInterval(animate, 10)
-  }, "text");
+    interval_id = setInterval(animate, 100)
+  },
+  "text"); // jQuery get
 }
 console.log("here");
 window.initgg = init;
