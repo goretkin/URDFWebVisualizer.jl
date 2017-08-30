@@ -31,6 +31,11 @@ if(!STLLoader) {
   console.error('STLLoader not loaded');
 }
 
+var ROSLIB = ROSLIB || typeof require !== 'undefined' && require('roslib');
+if(!THREE) {
+  throw new Error('This library requires ROSLIB');
+}
+
 if(!THREE.STLLoader) {
   console.error('THREE.STLLoader not defined');
 }

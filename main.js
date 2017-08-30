@@ -1,25 +1,7 @@
-console.log("hey gurl");
-
-// https://github.com/mrdoob/three.js/commit/c2cec2e7dca8b6b47ce25f831635b13275e0217f
-// https://github.com/enspiral-cherubi/three-stl-loader/issues/5
-// monkey patch, otherwise not needed.
-// var THREE = require("three");
-// THREE.FileLoader = THREE.XHRLoader;
-
-//var EventEmitter2 = require("eventemitter2");
-//window.THREE = THREE;
-//window.EventEmitter2 = EventEmitter2;
-
-console.log("hey THREE");
 var ROSLIB = require("roslib");
 var ROS3D = require("./vendor/ros3djs");
 var TFClientShim = require('TFClientShim.js');
 var $ = require('jquery');
-
-console.log("heygurlll");
-// These are already visible somehow.
-window.ROS3D = ROS3D;
-window.ROSLIB = ROSLIB;
 
 function add(a, b) {
   return a + b;
@@ -101,7 +83,7 @@ tx__a_link__b_link = transform_urdf_(urdf_model, a_link, b_link, configuration)
 var urdf_string;
 var urdf_model;
 var urdf_vis;
-var tf_shim = new TFClientShim();
+
 var viewer;
 var transform_urdf_;
 
@@ -114,6 +96,7 @@ function init(div_id) {
     url : 'ws://demo.robotwebtools.org:9090'
   });
   */
+  var tf_shim = new TFClientShim();
 
   viewer = new ROS3D.Viewer({
     divID : div_id,
