@@ -176,6 +176,7 @@ function init_urdf_viewer(options) {
     output.update_link = update_link;
     output.update_configurations = update_configurations;
     output.urdf_model = urdf_model;
+    // TODO call this only once all the 3D assets are loaded
     if (options.urdf_vis_ready) { options.urdf_vis_ready(output); }
   },
   "text"); // jQuery get
