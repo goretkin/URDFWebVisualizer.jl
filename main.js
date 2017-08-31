@@ -137,7 +137,7 @@ function init_urdf_viewer(options) {
       // child_link must be an ancestor of root_link_name.
       // If there is a loop in the URDF, this can not terminate.
       if (root_link_name === child_link_name) {
-        // return Identity transform. roslibjs doesn't have way to multiply transforms. use Pose instead.
+        // return Identity transform.
         return new ROSLIB.Transform();
       }
       var child_link = urdf_model.links[child_link_name];
@@ -145,13 +145,10 @@ function init_urdf_viewer(options) {
       if (!joint) {
         return undefined;
       }
-      //console.log("joint: " + joint.name);
-      //console.log("joint.origin: " + joint.origin);
       var tx__root__parent = transform_urdf(urdf_model, root_link_name, joint.parent_link, configurations);
       var tx__parent__child = joint.origin;
       var tx__joint_config = joint_transform(joint, configurations[joint.name]);
       return compose(tx__root__parent, compose(tx__parent__child, tx__joint_config));
-      //return [tx_child__parent, tx__parent__base].reduce(compose, new ROSLIB.Transform());
     }
     transform_urdf_ = transform_urdf
 
@@ -162,14 +159,16 @@ function init_urdf_viewer(options) {
       );
     }
 
-    // update all links according to configurations
-    function update_configurations(configurations) {
+    // update all links according to configurations, placing root at origin.
+    function update_configurations(configurations, root) {
       for (link_name in tf_shim.frameInfos) {
-        if (link_name === "base_footprint") {
-          continue; // transform_urdf not yet implemented
+        var tf = transform_urdf(urdf_model, root, link_name, configurations);
+        if (tf === 'undefined') {
+          console.error('transform_urdf cannot transform.');
         }
-        var tf = transform_urdf(urdf_model, "base_link", link_name, configurations);
-        update_link(link_name, tf);
+        else {
+          update_link(link_name, tf);
+        }
       }
     }
 
