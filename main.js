@@ -157,15 +157,13 @@ function init_urdf_viewer(options) {
 
     // update all links according to configurations
     function update_configurations(configurations) {
-      var tx_testoffset = new ROSLIB.Transform({
-        rotation : quaternion_from_axis_angle({ x : 0, y : 0, z : 1 }, 0.0) });
       for (link_name in tf_shim.frameInfos) {
         if (link_name === "base_footprint") {
           continue; // transform_urdf not yet implemented
         }
         var tf = transform_urdf(urdf_model, "base_link", link_name, configurations);
         tf_shim.frameInfos[link_name].cbs.forEach(
-          function(f) { f(compose(tx_testoffset, tf)); }
+          function(f) { f(tf); }
         );
       }
     }
