@@ -90,8 +90,7 @@ var transform_urdf_;
 var joint_parents;
 var joint_childs;
 
-function init_urdf_viewer(options, output) {
-  console.log("hey");
+function init_urdf_viewer(options) {
   options.width = typeof options.width === 'undefined' ? window.innerWidth : options.width;
   options.height = typeof options.height === 'undefined' ? window.innerHeight : options.height;
   var urdf_url = options.urdf_url;
@@ -114,7 +113,6 @@ function init_urdf_viewer(options, output) {
 
 
   $.get(urdf_url, function(data) {
-      console.log("jquery");
     urdf_string = data;
     urdf_model = new ROSLIB.UrdfModel({ string : urdf_string});
 
@@ -158,10 +156,6 @@ function init_urdf_viewer(options, output) {
     transform_urdf_ = transform_urdf
 
     // update all links according to configurations
-    var configurations = {}
-    for (joint_name in urdf_model.joints) {
-      configurations[joint_name] = 0.0;
-    }
     function update_configurations(configurations) {
       var tx_testoffset = new ROSLIB.Transform({
         rotation : quaternion_from_axis_angle({ x : 0, y : 0, z : 1 }, 0.0) });
@@ -176,23 +170,10 @@ function init_urdf_viewer(options, output) {
       }
     }
 
+    var output = {};
     output.update_configurations = update_configurations;
+    output.urdf_model = urdf_model;
     if (options.urdf_vis_ready) { options.urdf_vis_ready(output); }
-
-    var t = 0.0;
-    function animate() {
-      var a = .1 * Math.sin(2*Math.PI * t) + 0.01 * Math.cos(2*Math.PI * .8 * t);
-
-      for (joint_name in urdf_model.joints) {
-        configurations[joint_name] = a;
-      }
-
-      // configurations["r_elbow_flex_joint"] = a;
-      update_configurations(configurations);
-      t += 0.01;
-    };
-
-    interval_id = setInterval(animate, 10)
   },
   "text"); // jQuery get
 }

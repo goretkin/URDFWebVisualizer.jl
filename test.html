@@ -9,12 +9,51 @@
 
 
 <script>
-  window.outputgg = {};
+  function urdf_vis_ready(vis, speed) {
+    console.log("vis_ready");
+    var t = 0.0;
+    function animate() {
+      var a = .1 * Math.sin(2*Math.PI * t) + 0.01 * Math.cos(2*Math.PI * .8 * t);
+      var configurations = {}
+      for (joint_name in vis.urdf_model.joints) {
+        configurations[joint_name] = 0.0;
+      }
+
+      for (joint_name in vis.urdf_model.joints) {
+        configurations[joint_name] = a;
+      }
+
+      // configurations["r_elbow_flex_joint"] = a;
+      vis.update_configurations(configurations);
+      t += speed;
+    };
+
+    interval_id = setInterval(animate, 10);
+  }
+
+
   init_urdf_viewer({
     div_id : 'urdf',
     width : 600,
     height : 600,
     urdf_url : './pr2_description/robot_uncalibrated_fix_mass.xml',
     urdf_resources_url : 'http://0.0.0.0:8000/',
-  }, window.outputgg);
+    urdf_vis_ready : function (vis) {urdf_vis_ready(vis, 0.01);},
+  });
+
+  // some race condition, and if this is called immediately, both robots show up in the second canvas
+  // happens in ff and safari
+  function draw_2 () {
+  init_urdf_viewer({
+    div_id : 'urdf2',
+    width : 600,
+    height : 600,
+    urdf_url : './pr2_description/robot_uncalibrated_fix_mass.xml',
+    urdf_resources_url : 'http://0.0.0.0:8000/',
+    urdf_vis_ready : function (vis) {urdf_vis_ready(vis, 0.02);},
+  });
+  }
+
+  setTimeout(draw_2, 10);
+
 </script>
