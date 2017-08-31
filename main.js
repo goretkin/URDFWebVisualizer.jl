@@ -155,6 +155,13 @@ function init_urdf_viewer(options) {
     }
     transform_urdf_ = transform_urdf
 
+    // update the transforms in tf_shim
+    function update_link(link_name, transform) {
+      tf_shim.frameInfos[link_name].cbs.forEach(
+        function(f) { f(transform); }
+      );
+    }
+
     // update all links according to configurations
     function update_configurations(configurations) {
       for (link_name in tf_shim.frameInfos) {
@@ -162,13 +169,12 @@ function init_urdf_viewer(options) {
           continue; // transform_urdf not yet implemented
         }
         var tf = transform_urdf(urdf_model, "base_link", link_name, configurations);
-        tf_shim.frameInfos[link_name].cbs.forEach(
-          function(f) { f(tf); }
-        );
+        update_link(link_name, tf);
       }
     }
 
     var output = {};
+    output.update_link = update_link;
     output.update_configurations = update_configurations;
     output.urdf_model = urdf_model;
     if (options.urdf_vis_ready) { options.urdf_vis_ready(output); }
