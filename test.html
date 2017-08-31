@@ -3,42 +3,105 @@
 </head>
 
 <script src="build/main.js"></script>
+
 <div id="urdf">will show here?</div>
+<input id="play" type="button" value="Play">
+<input id="pause" type="button" value="Pause">
+
+<input id="slider" type="range" min="0" max="500" value="0" step="1"/>
+<input id="frame" type="number"/>
+
+<script>
+</script>
 
 <div id="urdf2">will show here?2</div>
 
-
 <script>
-  function urdf_vis_ready(vis, speed) {
-    console.log("vis_ready");
-    var t = 0.0;
-    function animate() {
-      var a = .1 * Math.sin(2*Math.PI * t) + 0.01 * Math.cos(2*Math.PI * .8 * t);
-      var configurations = {}
-      for (joint_name in vis.urdf_model.joints) {
-        configurations[joint_name] = 0.0;
+  function init_urdf_player(viewer_options) {
+    var ids = ['slider', 'frame'];
+    var play_state = 'stopped';
+    var animation_time_start = 0.0;
+    var time_start;
+    var interval_handle;
+    var last_animation_time;
+
+    function vis_ready(vis) {
+      ids.forEach(function(id) {
+        document.getElementById(id).addEventListener("change", function(){
+          update_time(parseInt(this.value), this.id)
+        });
+        document.getElementById(id).addEventListener("input", function(){
+          update_time(parseInt(this.value), this.id)
+        });
+      })
+
+      function update_time(new_frame, source) {
+        // update other sync representations of the quantity
+        ids.forEach(function(id) {
+          if (id !== source) { document.getElementById(id).value = new_frame; }
+        })
+
+        if (source !== "playerbacker") {
+          last_animation_time = new_frame / 50;
+          pause_press();
+        }
+        show_frame(new_frame);
       }
 
-      for (joint_name in vis.urdf_model.joints) {
-        configurations[joint_name] = a;
+      document.getElementById('play').addEventListener("click", play_press);
+      document.getElementById('pause').addEventListener("click", pause_press);
+
+      function play_press() {
+        if (play_state === 'playing') { return; }
+        play_state = 'playing';
+        time_start = new Date();
+        interval_handle = setInterval(animate, 20);
       }
 
-      // configurations["r_elbow_flex_joint"] = a;
-      vis.update_configurations(configurations, 'base_link');
-      t += speed;
-    };
+      // function
+      function pause_press() {
+        animation_time_start = last_animation_time;
+        if (play_state === 'paused') { return; }
+        play_state = 'paused';
+        clearInterval(interval_handle);
+        time_start = "";
+        interval_handle = "";
+      }
 
-    interval_id = setInterval(animate, 10);
+      function animate() {
+        var play_time = ((new Date()).getTime() - time_start)/1000.0;
+        var animation_time = animation_time_start + play_time;
+        var frame = parseInt(animation_time * 50);
+        last_animation_time = animation_time;
+        update_time(frame, "playerbacker");
+      }
+
+      function show_frame(f) {
+        var t = f/50.0;
+        var a = .1 * Math.sin(2*Math.PI * t) + 0.01 * Math.cos(2*Math.PI * .8 * t);
+        var configurations = {}
+        for (joint_name in vis.urdf_model.joints) {
+          configurations[joint_name] = 0.0;
+        }
+        for (joint_name in vis.urdf_model.joints) {
+          configurations[joint_name] = a;
+        }
+        vis.update_configurations(configurations, 'base_link');
+
+      }
+    }
+
+    viewer_options.urdf_vis_ready = vis_ready;
+    init_urdf_viewer(viewer_options)
   }
 
 
-  init_urdf_viewer({
+  init_urdf_player({
     div_id : 'urdf',
     width : 600,
     height : 600,
     urdf_url : './pr2_description/robot_uncalibrated_fix_mass.xml',
     urdf_resources_url : 'http://0.0.0.0:8000/',
-    urdf_vis_ready : function (vis) {urdf_vis_ready(vis, 0.01);},
   });
 
   // some race condition, and if this is called immediately, both robots show up in the second canvas
@@ -54,6 +117,6 @@
   });
   }
 
-  setTimeout(draw_2, 10);
+  setTimeout(draw_2, 100000);
 
 </script>
