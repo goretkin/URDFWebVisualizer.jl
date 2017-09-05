@@ -4,12 +4,14 @@
 
 <script src="build/main.js"></script>
 
-<div id="urdf">will show here?</div>
-<input id="play" type="button" value="Play">
-<input id="pause" type="button" value="Pause">
+<div id=mother>
+  <div class="urdf">will show here?</div>
+  <input class="play" type="button" value="Play">
+  <input class="pause" type="button" value="Pause">
 
-<input id="slider" type="range" min="0" max="500" value="0" step="1"/>
-<input id="frame" type="number"/>
+  <input class="slider" type="range" min="0" max="500" value="0" step="1"/>
+  <input class="frame" type="number"/>
+</div>
 
 <script>
 </script>
@@ -18,7 +20,8 @@
 
 <script>
   function init_urdf_player(viewer_options) {
-    var ids = ['slider', 'frame'];
+    var mother = document.getElementById('mother');
+    var sync_elements = ['slider', 'frame'].map(function(n) { return mother.getElementsByClassName(n)[0]});
     var play_state = 'stopped';
     var animation_time_start = 0.0;
     var time_start;
@@ -26,19 +29,19 @@
     var last_animation_time;
 
     function vis_ready(vis) {
-      ids.forEach(function(id) {
-        document.getElementById(id).addEventListener("change", function(){
-          update_time(parseInt(this.value), this.id)
+      sync_elements.forEach(function(element) {
+        element.addEventListener("change", function(){
+          update_time(parseInt(this.value), this)
         });
-        document.getElementById(id).addEventListener("input", function(){
-          update_time(parseInt(this.value), this.id)
+        element.addEventListener("input", function(){
+          update_time(parseInt(this.value), this)
         });
       })
 
       function update_time(new_frame, source) {
         // update other sync representations of the quantity
-        ids.forEach(function(id) {
-          if (id !== source) { document.getElementById(id).value = new_frame; }
+        sync_elements.forEach(function(element) {
+          if (element !== source) { element.value = new_frame; }
         })
 
         if (source !== "playerbacker") {
@@ -48,8 +51,8 @@
         show_frame(new_frame);
       }
 
-      document.getElementById('play').addEventListener("click", play_press);
-      document.getElementById('pause').addEventListener("click", pause_press);
+      mother.getElementsByClassName('play')[0].addEventListener("click", play_press);
+      mother.getElementsByClassName('pause')[0].addEventListener("click", pause_press);
 
       function play_press() {
         if (play_state === 'playing') { return; }
@@ -96,8 +99,26 @@
   }
 
 
+  // all just a work-around because init_urdf_player (ROS3D.Viewer) expects a div id
+  // not a div element.
+  function guid() {
+    function s4() {
+      return Math.floor((1 + Math.random()) * 0x10000)
+        .toString(16)
+        .substring(1);
+    }
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+      s4() + '-' + s4() + s4() + s4();
+  }
+
+  function set_element_id_random(el) {
+    var id = guid();
+    el.setAttribute("id", id);
+    return id;
+  }
+
   init_urdf_player({
-    div_id : 'urdf',
+    div_id : set_element_id_random(mother.getElementsByClassName('urdf')[0]),
     width : 600,
     height : 600,
     urdf_url : './pr2_description/robot_uncalibrated_fix_mass.xml',
