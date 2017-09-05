@@ -182,7 +182,7 @@ function init_urdf_viewer(options) {
   "text"); // jQuery get
 }
 
-function init_urdf_player(viewer_options, dom_mother) {
+function init_urdf_player(viewer_options, dom_mother, show_frame) {
   var sync_elements = ['slider', 'numeric_frame'].map(function(n) { return dom_mother.getElementsByClassName(n)[0]});
   var play_state = 'stopped';
   var animation_time_start = 0.0;
@@ -210,7 +210,7 @@ function init_urdf_player(viewer_options, dom_mother) {
         last_animation_time = new_frame / 50;
         pause_press();
       }
-      show_frame(new_frame);
+      show_frame(new_frame, vis);
     }
 
     dom_mother.getElementsByClassName('play')[0].addEventListener("click", play_press);
@@ -239,20 +239,6 @@ function init_urdf_player(viewer_options, dom_mother) {
       var frame = parseInt(animation_time * 50);
       last_animation_time = animation_time;
       update_time(frame, "playerbacker");
-    }
-
-    function show_frame(f) {
-      var t = f/50.0;
-      var a = .1 * Math.sin(2*Math.PI * t) + 0.01 * Math.cos(2*Math.PI * .8 * t);
-      var configurations = {}
-      for (joint_name in vis.urdf_model.joints) {
-        configurations[joint_name] = 0.0;
-      }
-      for (joint_name in vis.urdf_model.joints) {
-        configurations[joint_name] = a;
-      }
-      vis.update_configurations(configurations, 'base_link');
-
     }
   }
 
