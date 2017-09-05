@@ -182,13 +182,15 @@ function init_urdf_viewer(options) {
   "text"); // jQuery get
 }
 
-function init_urdf_player(viewer_options, dom_mother, show_frame, frame_rate) {
+function init_urdf_player(viewer_options, dom_mother, show_frame, frame_rate, max_frame) {
   var sync_elements = ['slider', 'numeric_frame'].map(function(n) { return dom_mother.getElementsByClassName(n)[0]});
   var play_state = 'stopped';
   var animation_time_start = 0.0;
   var time_start;
   var interval_handle;
   var last_animation_time;
+
+  dom_mother.getElementsByClassName('slider')[0].setAttribute('max', max_frame);
 
   function vis_ready(vis) {
     sync_elements.forEach(function(element) {
@@ -208,6 +210,11 @@ function init_urdf_player(viewer_options, dom_mother, show_frame, frame_rate) {
 
       if (source !== "playerbacker") {
         last_animation_time = new_frame / frame_rate;
+        pause_press();
+      }
+
+      if (new_frame >= max_frame) {
+        last_animation_time = 0.0;
         pause_press();
       }
       show_frame(new_frame, vis);
@@ -237,6 +244,8 @@ function init_urdf_player(viewer_options, dom_mother, show_frame, frame_rate) {
       var play_time = ((new Date()).getTime() - time_start)/1000.0;
       var animation_time = animation_time_start + play_time;
       var frame = parseInt(animation_time * frame_rate);
+      // clip to max frame
+      if (frame >= max_frame) { frame = max_frame; }
       last_animation_time = animation_time;
       update_time(frame, "playerbacker");
     }

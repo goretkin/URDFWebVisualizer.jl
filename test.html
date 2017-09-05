@@ -56,7 +56,7 @@
     height : 600,
     urdf_url : './pr2_description/robot_uncalibrated_fix_mass.xml',
     urdf_resources_url : 'http://0.0.0.0:8000/',
-  }, document.getElementById('mother'), show_frame, 50.0);
+  }, document.getElementById('mother'), show_frame, 50.0, 500);
 
   // some race condition, and if this is called immediately, both robots show up in the second canvas
   // happens in ff and safari
