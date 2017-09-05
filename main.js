@@ -93,7 +93,6 @@ var joint_childs;
 function init_urdf_viewer(options) {
   options.width = typeof options.width === 'undefined' ? window.innerWidth : options.width;
   options.height = typeof options.height === 'undefined' ? window.innerHeight : options.height;
-  var urdf_url = options.urdf_url;
   var urdf_resources_url = options.urdf_resources_url;
 
   var tf_shim = new TFClientShim();
@@ -111,8 +110,7 @@ function init_urdf_viewer(options) {
     num_cells: 20
   }));
 
-
-  $.get(urdf_url, function(data) {
+  function load_urdf(data) {
     urdf_string = data;
     urdf_model = new ROSLIB.UrdfModel({ string : urdf_string});
 
@@ -178,8 +176,17 @@ function init_urdf_viewer(options) {
     output.urdf_model = urdf_model;
     // TODO call this only once all the 3D assets are loaded
     if (options.urdf_vis_ready) { options.urdf_vis_ready(output); }
-  },
-  "text"); // jQuery get
+  }
+
+  if (options.urdf_url) {
+    $.get(options.urdf_url, load_urdf, "text");
+  }
+  else if (options.urdf_text) {
+    load_urdf(options.urdf_text);
+  }
+  else {
+    console.log("Need either urdf_url or urdf_text");
+  }
 }
 
 function init_urdf_player(viewer_options, dom_mother, show_frame, frame_rate, max_frame) {
