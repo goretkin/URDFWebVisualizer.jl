@@ -182,4 +182,83 @@ function init_urdf_viewer(options) {
   "text"); // jQuery get
 }
 
+function init_urdf_player(viewer_options, dom_mother) {
+  var sync_elements = ['slider', 'numeric_frame'].map(function(n) { return dom_mother.getElementsByClassName(n)[0]});
+  var play_state = 'stopped';
+  var animation_time_start = 0.0;
+  var time_start;
+  var interval_handle;
+  var last_animation_time;
+
+  function vis_ready(vis) {
+    sync_elements.forEach(function(element) {
+      element.addEventListener("change", function(){
+        update_time(parseInt(this.value), this)
+      });
+      element.addEventListener("input", function(){
+        update_time(parseInt(this.value), this)
+      });
+    })
+
+    function update_time(new_frame, source) {
+      // update other sync representations of the quantity
+      sync_elements.forEach(function(element) {
+        if (element !== source) { element.value = new_frame; }
+      })
+
+      if (source !== "playerbacker") {
+        last_animation_time = new_frame / 50;
+        pause_press();
+      }
+      show_frame(new_frame);
+    }
+
+    dom_mother.getElementsByClassName('play')[0].addEventListener("click", play_press);
+    dom_mother.getElementsByClassName('pause')[0].addEventListener("click", pause_press);
+
+    function play_press() {
+      if (play_state === 'playing') { return; }
+      play_state = 'playing';
+      time_start = new Date();
+      interval_handle = setInterval(animate, 20);
+    }
+
+    // function
+    function pause_press() {
+      animation_time_start = last_animation_time;
+      if (play_state === 'paused') { return; }
+      play_state = 'paused';
+      clearInterval(interval_handle);
+      time_start = "";
+      interval_handle = "";
+    }
+
+    function animate() {
+      var play_time = ((new Date()).getTime() - time_start)/1000.0;
+      var animation_time = animation_time_start + play_time;
+      var frame = parseInt(animation_time * 50);
+      last_animation_time = animation_time;
+      update_time(frame, "playerbacker");
+    }
+
+    function show_frame(f) {
+      var t = f/50.0;
+      var a = .1 * Math.sin(2*Math.PI * t) + 0.01 * Math.cos(2*Math.PI * .8 * t);
+      var configurations = {}
+      for (joint_name in vis.urdf_model.joints) {
+        configurations[joint_name] = 0.0;
+      }
+      for (joint_name in vis.urdf_model.joints) {
+        configurations[joint_name] = a;
+      }
+      vis.update_configurations(configurations, 'base_link');
+
+    }
+  }
+
+  viewer_options.urdf_vis_ready = vis_ready;
+  init_urdf_viewer(viewer_options)
+}
+
 window.init_urdf_viewer = init_urdf_viewer;
+window.init_urdf_player = init_urdf_player;
