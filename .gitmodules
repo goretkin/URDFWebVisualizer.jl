@@ -1,3 +1,6 @@
 [submodule "vendor/roslibjs"]
 	path = vendor/roslibjs
 	url = https://github.com/goretkin/roslibjs
+[submodule "vendor/ros3djs"]
+	path = vendor/ros3djs
+	url = https://github.com/goretkin/ros3djs
