@@ -7,3 +7,6 @@ $ cd vendor/ros3djs/; grunt build; cd -;
 
 To build the main project:
 $ yarn run build-for-dev
+
+roslibjs is included as a submodule. After cloning the main project, to clone the submodules:
+$ git submodule init; git submodule update
