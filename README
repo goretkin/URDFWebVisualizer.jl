@@ -1,12 +1,14 @@
-This project has some deps. Some of those deps appear to be on npmjs, but the version is incompatible, or unmaintained or whatever. So a copy of the deps is in vendor. Ideally, we should get the project working with modern THREE, and modern packages on npmjs.
+This project has some deps. Some of those deps appear to be on npmjs, but the version is incompatible, or unmaintained or whatever. So a copy of the deps is in `vendor`. Ideally, we should get the project working with modern THREE, and modern packages on npmjs.
 
-In some cases, only the build product is included. In others, there's a repo, in which case that has to be built itself.
-For example vendor/ros3djs has been modified so that it loads its dependencies in a CommonJS way (as opposed to expecting them to be defined globally). Note that this CommonJS way doesn't make any sense to the ros3djs project. It only works when its build file is concatenated by webpack in the main project.
-To build it ros3djs:
-$ cd vendor/ros3djs/; grunt build; cd -;
+Some deps are repos (via git submodules). To get these, do
+``$ git submodule init; git submodule update`
+
+Then we need to build those JS projects:
+`$ cd vendor/ros3djs/; npm install; cd -;`
+`$ cd vendor/ros3djs/; grunt build; cd -;`
+`$ cd vendor/roslibjs/; npm install; cd -;`
+`$ cd vendor/roslibjs/; grunt build; cd -;`
 
 To build the main project:
-$ yarn run build-for-dev
-
-roslibjs is included as a submodule. After cloning the main project, to clone the submodules:
-$ git submodule init; git submodule update
+`$ npm install`
+`$ yarn run build-for-dev`
