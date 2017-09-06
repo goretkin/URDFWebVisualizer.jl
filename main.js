@@ -1,6 +1,6 @@
 var ROSLIB = require("roslib");
 var ROS3D = require("./vendor/ros3djs");
-var TFClientShim = require('TFClientShim.js');
+var TFClientShim = require('./vendor/TFClientShim.js');
 var $ = require('jquery');
 
 function add(a, b) {
