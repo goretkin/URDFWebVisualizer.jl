@@ -2,7 +2,7 @@ module URDFViewer
 
 import JSON
 
-js_path = joinpath(dirname(@__FILE__),"..","build","main.js")
+js_path = joinpath(@__DIR__,"..","build","main.js")
 js = readstring(js_path)
 display(
   MIME"text/html"(),
