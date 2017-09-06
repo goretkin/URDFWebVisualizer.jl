@@ -71,3 +71,7 @@ TFClientShim.prototype.unsubscribe = function(frameID, callback) {
     delete this.frameInfos[frameID];
   }
 };
+
+if (typeof module !== 'undefined') {
+  module.exports = TFClientShim;
+}
