@@ -1,0 +1,6 @@
+{
+  "name": "ColladaLoader2",
+  "version": "0.17.0-SNAPSHOT",
+  "license": "BSD-3-Clause",
+  "main": "./ColladaLoader2_wrapper.js"
+}
