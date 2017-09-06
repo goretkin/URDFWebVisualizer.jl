@@ -1,4 +1,4 @@
-module URDFViewer
+module URDFWebVisualizer
 
 import JSON
 
