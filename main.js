@@ -91,19 +91,11 @@ var joint_parents;
 var joint_childs;
 
 function init_urdf_viewer(options) {
-  options.width = typeof options.width === 'undefined' ? window.innerWidth : options.width;
-  options.height = typeof options.height === 'undefined' ? window.innerHeight : options.height;
   var urdf_resources_url = options.urdf_resources_url;
 
   var tf_shim = new TFClientShim();
 
-  viewer = new ROS3D.Viewer({
-    divID : options.div_id,
-    width : options.width,
-    height : options.height,
-    antialias : true,
-    background: '#002233'
-  });
+  viewer = new ROS3D.Viewer(options.viewer_options);
   viewer.addObject(new ROS3D.Grid(options.grid_options || {
     color:'#0181c4',
     cellSize: 0.05,

@@ -8,6 +8,7 @@ display(
   MIME"text/html"(),
   """
   <script>$js</script>
+  <p>URDFWebVisualizer javascript loaded.</p>
   """
 )
 
@@ -29,10 +30,8 @@ end
 
 # joint_data size (n_joints, n_times)
 # joint_order is string array of joint names
-function run_player_js(id, joint_order, joint_data, base_link, frame_rate, viewer_options)
-  display(
-      MIME"application/javascript"(),
-      """
+function run_player_js(id, joint_order, joint_data, base_link, frame_rate, options)
+    script = """
       (function() {  // don't leak scope.
         var mother = document.getElementById('$(id)');
         var joint_order = $(JSON.json(joint_order));
@@ -55,20 +54,27 @@ function run_player_js(id, joint_order, joint_data, base_link, frame_rate, viewe
           for (var attrname in obj2) { obj1[attrname] = obj2[attrname]; }
         }
 
+        var options = $(JSON.json(options));
+        var default_size = mother.offsetWidth
+
         var viewer_options = {
-          div_id : '$(id)-urdf-canvas',
-          width : 600,
-          height : 600,
+          divID : '$(id)-urdf-canvas',
+          width : default_size,
+          height : default_size,
+          antialias : true,
+          background: '#002233'
         }
 
         // merge in options from Julia
-        objassign(viewer_options, $(JSON.json(viewer_options)));
+        objassign(viewer_options, options.viewer_options);
+        options.viewer_options = viewer_options;
 
-        init_urdf_player(viewer_options, mother, show_frame, $(frame_rate),
+        init_urdf_player(options, mother, show_frame, $(frame_rate),
           $(size(joint_data, 2)));
 
       })();
-      """)
+      """
+      display(MIME"application/javascript"(), script)
 end
 
 end
